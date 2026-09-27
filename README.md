@@ -3,6 +3,8 @@
 A Tic Tac Toe game built with React, hooks and `useReducer` for state
 management.
 
+- This was built as part of Zaio Full Stack and & AI Engineering Bootcamp 
+
 ## Features implemented
 
 **1. Base game**
@@ -87,28 +89,7 @@ npm run build
 npm run preview   # serve the built dist/ folder locally to double check it
 ```
 
-## Deploying (Netlify or Vercel)
 
-**Vercel**
-1. Push this folder to a GitHub repo.
-2. Import the repo at vercel.com → New Project.
-3. Framework preset: Vite. Build command: `npm run build`. Output
-   directory: `dist`. Deploy.
 
-**Netlify**
-1. Push this folder to a GitHub repo.
-2. Add new site → Import an existing project at app.netlify.com.
-3. Build command: `npm run build`. Publish directory: `dist`. Deploy.
 
-Once deployed, submit the live link together with the GitHub repo link.
 
-## Recording the walkthrough video
-
-A short screen recording (under 4 minutes, face visible) should cover, in
-order:
-1. A quick gameplay demo showing a win and a draw
-2. The scoreboard feature (the "feature without AI tools")
-3. A short tour of `gameReducer.js` / `gameLogic.js` explaining the state
-   management approach
-4. The advanced features: move history / time travel, playing against the
-   computer, and the turn timer
