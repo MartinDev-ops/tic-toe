@@ -1,29 +1,36 @@
-import { useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import Board from './components/Board';
 import Scoreboard from './components/Scoreboard';
 import MoveHistory from './components/MoveHistory';
-import GameModeSettings from './components/GameModeSettings';
+import GameSettings from './components/GameSettings';
+import PlayerNames from './components/PlayerNames';
+import TurnTimer from './components/TurnTimer';
 import { ACTIONS, gameReducer, initialGameState } from './gameReducer';
-import { calculateWinner, isBoardFull, playerForMove } from './gameLogic';
+import { getOutcome, playerForMove, playerLabel } from './gameLogic';
 import { BOT_PLAYER, chooseBotMove } from './botLogic';
+import { useTurnTimer } from './hooks/useTurnTimer';
+import './App.css';
 
 const BOT_DELAY_MS = 500;
-import './App.css';
+const TURN_SECONDS = 10;
 
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
-  const { history, currentMove, scores, mode, difficulty } = state;
+  const { history, currentMove, scores, names, mode, difficulty, timerEnabled, timedOut } = state;
 
   const currentSquares = history[currentMove];
-  const result = calculateWinner(currentSquares);
-  const draw = !result && isBoardFull(currentSquares);
-  const gameIsOver = Boolean(result) || draw;
+  const outcome = getOutcome(currentSquares, timedOut);
   const nextPlayer = playerForMove(currentMove);
+  const label = (player) => playerLabel(player, names, mode);
+  const panelLabels = {
+    X: label('X') === 'X' ? 'Player X' : label('X'),
+    O: label('O') === 'O' ? 'Player O' : label('O'),
+  };
 
-  // The bot only moves on the latest board, so stepping back through the
-  // move history lets you look at old positions without the bot playing.
+  // The bot and the timer only run on the latest board, so stepping back
+  // through the move history lets you look at old positions safely.
   const isLatestMove = currentMove === history.length - 1;
-  const isBotTurn = mode === 'bot' && nextPlayer === BOT_PLAYER && !gameIsOver;
+  const isBotTurn = mode === 'bot' && nextPlayer === BOT_PLAYER && !outcome.over;
 
   useEffect(() => {
     if (!isBotTurn || !isLatestMove) return undefined;
@@ -34,37 +41,29 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [isBotTurn, isLatestMove, currentSquares, difficulty]);
 
+  const handleTimeUp = useCallback(() => dispatch({ type: ACTIONS.TIME_UP }), []);
+  const timerActive = timerEnabled && !outcome.over && isLatestMove && !isBotTurn;
+  const secondsLeft = useTurnTimer({
+    seconds: TURN_SECONDS,
+    active: timerActive,
+    turnKey: `${history.length}:${currentMove}`,
+    onExpire: handleTimeUp,
+  });
+
   let status;
-  if (result) {
-    status = `Winner: ${result.winner}`;
-  } else if (draw) {
+  if (outcome.winner) {
+    status = `Winner: ${label(outcome.winner)}`;
+  } else if (outcome.draw) {
     status = 'Draw!';
   } else {
-    status = `Next Player: ${nextPlayer}`;
+    status = `Next Player: ${label(nextPlayer)}`;
   }
 
-  function handleSquareClick(index) {
-    dispatch({ type: ACTIONS.MAKE_MOVE, index });
-  }
-
-  function handleJumpTo(move) {
-    dispatch({ type: ACTIONS.JUMP_TO, move });
-  }
-
-  function handleRestartBoard() {
-    dispatch({ type: ACTIONS.RESET_BOARD });
-  }
-
-  function handleResetScores() {
-    dispatch({ type: ACTIONS.RESET_SCORES });
-  }
-
-  function handleModeChange(nextMode) {
-    dispatch({ type: ACTIONS.SET_MODE, mode: nextMode });
-  }
-
-  function handleDifficultyChange(nextDifficulty) {
-    dispatch({ type: ACTIONS.SET_DIFFICULTY, difficulty: nextDifficulty });
+  let hint = null;
+  if (timedOut && outcome.over) {
+    hint = `${label(timedOut)} ran out of time`;
+  } else if (isBotTurn && isLatestMove) {
+    hint = 'Computer is thinking…';
   }
 
   return (
@@ -75,36 +74,71 @@ export default function App() {
 
       <main className="app__layout">
         <section className="panel game-panel" aria-label="Game board">
-          <GameModeSettings
+          <GameSettings
             mode={mode}
             difficulty={difficulty}
-            onModeChange={handleModeChange}
-            onDifficultyChange={handleDifficultyChange}
+            timerEnabled={timerEnabled}
+            onModeChange={(nextMode) => dispatch({ type: ACTIONS.SET_MODE, mode: nextMode })}
+            onDifficultyChange={(level) => dispatch({ type: ACTIONS.SET_DIFFICULTY, difficulty: level })}
+            onTimerChange={(enabled) => dispatch({ type: ACTIONS.SET_TIMER, enabled })}
           />
 
-          <p className={`status${gameIsOver ? ' status--over' : ''}`} role="status">
+          <p className={`status${outcome.over ? ' status--over' : ''}`} role="status">
             {status}
           </p>
-          {isBotTurn && isLatestMove && <p className="status-hint">Computer is thinking…</p>}
+          {hint && <p className="status-hint">{hint}</p>}
+
+          {timerEnabled && !outcome.over && (
+            <TurnTimer
+              secondsLeft={secondsLeft}
+              totalSeconds={TURN_SECONDS}
+              playerLabel={label(nextPlayer)}
+              paused={!timerActive}
+            />
+          )}
 
           <Board
             squares={currentSquares}
-            winningLine={result ? result.line : null}
-            locked={gameIsOver || isBotTurn}
-            onSquareClick={handleSquareClick}
+            winningLine={outcome.line}
+            locked={outcome.over || isBotTurn}
+            onSquareClick={(index) => dispatch({ type: ACTIONS.MAKE_MOVE, index })}
           />
 
-          <button type="button" className="primary-button" onClick={handleRestartBoard}>
-            Restart game
-          </button>
+          <div className="game-actions">
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => dispatch({ type: ACTIONS.UNDO })}
+              disabled={currentMove === 0}
+            >
+              Undo move
+            </button>
+            <button
+              type="button"
+              className="primary-button"
+              onClick={() => dispatch({ type: ACTIONS.RESET_BOARD })}
+            >
+              Restart game
+            </button>
+          </div>
         </section>
 
         <aside className="app__sidebar">
-          <Scoreboard scores={scores} onResetScores={handleResetScores} />
+          <PlayerNames
+            names={names}
+            mode={mode}
+            onNameChange={(player, name) => dispatch({ type: ACTIONS.SET_PLAYER_NAME, player, name })}
+          />
+          <Scoreboard
+            scores={scores}
+            labels={panelLabels}
+            onResetScores={() => dispatch({ type: ACTIONS.RESET_SCORES })}
+          />
           <MoveHistory
             history={history}
             currentMove={currentMove}
-            onJumpTo={handleJumpTo}
+            labels={panelLabels}
+            onJumpTo={(move) => dispatch({ type: ACTIONS.JUMP_TO, move })}
           />
         </aside>
       </main>

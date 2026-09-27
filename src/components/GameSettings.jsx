@@ -1,8 +1,14 @@
-// Advanced feature: "Play vs Computer".
-// Presentational only - it shows the current mode/difficulty and reports changes.
+// Game settings: mode (advanced feature "Play vs Computer"), bot difficulty
+// and the turn timer. Presentational only - it shows the current settings
+// and reports changes upward.
 const MODES = [
   { value: 'pvp', label: '2 Players' },
   { value: 'bot', label: 'vs Computer' },
+];
+
+const TIMER_OPTIONS = [
+  { value: 'off', label: 'No timer' },
+  { value: 'on', label: '10s per turn' },
 ];
 
 const DIFFICULTIES = [
@@ -28,7 +34,14 @@ function SegmentedControl({ label, options, value, onChange }) {
   );
 }
 
-export default function GameModeSettings({ mode, difficulty, onModeChange, onDifficultyChange }) {
+export default function GameSettings({
+  mode,
+  difficulty,
+  timerEnabled,
+  onModeChange,
+  onDifficultyChange,
+  onTimerChange,
+}) {
   return (
     <div className="game-mode">
       <SegmentedControl label="Game mode" options={MODES} value={mode} onChange={onModeChange} />
@@ -40,6 +53,12 @@ export default function GameModeSettings({ mode, difficulty, onModeChange, onDif
           onChange={onDifficultyChange}
         />
       )}
+      <SegmentedControl
+        label="Turn timer"
+        options={TIMER_OPTIONS}
+        value={timerEnabled ? 'on' : 'off'}
+        onChange={(value) => onTimerChange(value === 'on')}
+      />
     </div>
   );
 }

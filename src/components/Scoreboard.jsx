@@ -1,16 +1,16 @@
 // Required feature: "Scoreboard (X wins / O wins / draws)".
 // Purely presentational - it just displays the scores object it is given.
-export default function Scoreboard({ scores, onResetScores }) {
+export default function Scoreboard({ scores, labels, onResetScores }) {
   return (
     <section className="panel scoreboard" aria-label="Scoreboard">
       <h2 className="panel__title">Scoreboard</h2>
       <dl className="scoreboard__grid">
         <div className="scoreboard__item">
-          <dt>Player X</dt>
+          <dt>{labels.X}</dt>
           <dd>{scores.X}</dd>
         </div>
         <div className="scoreboard__item">
-          <dt>Player O</dt>
+          <dt>{labels.O}</dt>
           <dd>{scores.O}</dd>
         </div>
         <div className="scoreboard__item">

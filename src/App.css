@@ -200,8 +200,34 @@
    Buttons
    --------------------------------------------------------------- */
 
-.primary-button {
+.game-actions {
+  display: flex;
+  gap: 10px;
   margin-top: 18px;
+}
+
+.secondary-button {
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2328;
+  background-color: #ffffff;
+  border: 1px solid #d7dbe0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background-color: #f6f8fa;
+  border-color: #b9c0c7;
+}
+
+.secondary-button:disabled {
+  color: #9aa1a9;
+  cursor: default;
+}
+
+.primary-button {
   padding: 9px 18px;
   font-size: 14px;
   font-weight: 600;
@@ -302,4 +328,100 @@
   color: #1d4ed8;
   font-weight: 600;
   cursor: default;
+}
+
+/* ---------------------------------------------------------------
+   Turn timer
+   --------------------------------------------------------------- */
+
+.turn-timer {
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 14px;
+}
+
+.turn-timer__text {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #57606a;
+}
+
+.turn-timer__seconds {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #1f2328;
+}
+
+.turn-timer__track {
+  height: 6px;
+  background-color: #e5e8eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.turn-timer__bar {
+  height: 100%;
+  background-color: #1d4ed8;
+  border-radius: 999px;
+  transition: width 1s linear, background-color 200ms ease;
+}
+
+.turn-timer--urgent .turn-timer__bar {
+  background-color: #d1242f;
+}
+
+.turn-timer--urgent .turn-timer__seconds {
+  color: #d1242f;
+}
+
+/* ---------------------------------------------------------------
+   Player names
+   --------------------------------------------------------------- */
+
+.player-names__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-names__field + .player-names__field {
+  margin-top: 8px;
+}
+
+.player-names__symbol {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 600;
+  background-color: #f6f8fa;
+  border: 1px solid #e5e8eb;
+  border-radius: 6px;
+}
+
+.player-names__field input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: #1f2328;
+  background-color: #ffffff;
+  border: 1px solid #d7dbe0;
+  border-radius: 6px;
+}
+
+.player-names__field input:focus {
+  outline: 2px solid #1d4ed8;
+  outline-offset: -1px;
+  border-color: #1d4ed8;
+}
+
+.player-names__field input:disabled {
+  color: #57606a;
+  background-color: #f6f8fa;
 }

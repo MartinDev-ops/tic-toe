@@ -5,34 +5,41 @@ management.
 
 ## Features implemented
 
-**1. Base game (React)**
+**1. Base game**
 - 3x3 board, players alternate X and O
 - Filled squares can't be overwritten
 - Detects a win (row, column or diagonal) and a draw (board full, no winner)
-- Status line reads exactly `Next Player: X`, `Winner: O`, or `Draw!`
-- Winning squares are highlighted
-- Clean, responsive UI (desktop and mobile), with a hover effect on empty
-  squares
+- Status line reads `Next Player: X`, `Winner: O`, or `Draw!`
+  (with player names, e.g. `Winner: Alice (X)`)
+- Winning squares are highlighted and the result shows as a banner
+- Responsive layout (desktop and mobile), hover effect on empty squares
 
-**2. Feature without AI tools: Scoreboard**
-- Tracks X wins / O wins / draws across games
-- "Restart game" clears the board but keeps the score
-- "Reset scoreboard" clears the tallies
+**2. Player features**
+- **Restart game**: clears the board, keeps the scores
+- **Undo move**: reverts the last move (against the computer it reverts
+  your move and the computer's reply)
+- **Scoreboard**: X wins / O wins / draws across games; each finished game
+  is counted once, even if you undo or time-travel and replay it
+- **Player names**: type names for X and O; they replace X / O in the
+  status line, scoreboard and move history
 
 **3. State management: `useReducer`**
-- All game state (`history`, `currentMove`, `scores`) lives in one reducer:
-  `src/gameReducer.js`
-- Actions: `MAKE_MOVE`, `JUMP_TO`, `RESET_BOARD`, `RESET_SCORES`,
-  `SET_MODE`, `SET_DIFFICULTY`
-- Win/draw rules live in one place, `src/gameLogic.js`, and are reused by
-  both the reducer and the UI (no duplicated logic)
-- `Board`, `Square`, `Scoreboard` and `MoveHistory` are presentational
-  ("dumb") components — they only receive props and call callbacks
+- All game state lives in one reducer: `src/gameReducer.js`
+- Actions: `MAKE_MOVE`, `UNDO`, `JUMP_TO`, `TIME_UP`, `RESET_BOARD`,
+  `RESET_SCORES`, `SET_MODE`, `SET_DIFFICULTY`, `SET_TIMER`,
+  `SET_PLAYER_NAME` (defined once in the `ACTIONS` object)
+- Win / draw / timeout rules live in one function, `getOutcome` in
+  `src/gameLogic.js`, used by both the reducer and the UI
+- Components are presentational: they receive props and call callbacks
 
-**4. Advanced feature: Move history + time travel**
-- Every move is stored as a board snapshot
-- Click any entry in "Move history" to jump back to that point in the game
-- Making a new move from an earlier point branches the game from there
+**4. Advanced features**
+- **Play vs Computer**: you are X, the computer is O. Easy picks a random
+  empty square; Hard uses minimax and never loses (`src/botLogic.js`)
+- **Turn timer**: optional 10 seconds per turn with a countdown bar; if time
+  runs out, that player loses (`src/hooks/useTurnTimer.js`)
+- **Move history + time travel**: every move is listed (e.g.
+  `#3: X at row 1, col 2`); click one to jump back to that board. Playing
+  from an earlier point branches the game from there
 
 ## Project structure
 
@@ -50,11 +57,15 @@ tictactoe/
     ├── gameLogic.js       pure helpers: calculateWinner, isBoardFull, playerForMove
     ├── gameReducer.js     useReducer state + actions
     ├── botLogic.js        computer opponent (random + minimax)
+    ├── hooks/
+    │   └── useTurnTimer.js   countdown for the turn timer
     └── components/
         ├── Board.jsx
         ├── Square.jsx
         ├── Scoreboard.jsx
-        ├── GameModeSettings.jsx
+        ├── GameSettings.jsx   mode, difficulty, timer
+        ├── PlayerNames.jsx
+        ├── TurnTimer.jsx
         └── MoveHistory.jsx
 ```
 
@@ -99,5 +110,5 @@ order:
 2. The scoreboard feature (the "feature without AI tools")
 3. A short tour of `gameReducer.js` / `gameLogic.js` explaining the state
    management approach
-4. The move history / time travel feature
-5. Playing against the computer on Easy and Hard
+4. The advanced features: move history / time travel, playing against the
+   computer, and the turn timer
