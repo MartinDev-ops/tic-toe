@@ -2,7 +2,7 @@ import { useReducer } from 'react';
 import Board from './components/Board';
 import Scoreboard from './components/Scoreboard';
 import MoveHistory from './components/MoveHistory';
-import { gameReducer, initialGameState } from './gameReducer';
+import { ACTIONS, gameReducer, initialGameState } from './gameReducer';
 import { calculateWinner, isBoardFull, playerForMove } from './gameLogic';
 import './App.css';
 
@@ -26,19 +26,19 @@ export default function App() {
   }
 
   function handleSquareClick(index) {
-    dispatch({ type: 'MAKE_MOVE', index });
+    dispatch({ type: ACTIONS.MAKE_MOVE, index });
   }
 
   function handleJumpTo(move) {
-    dispatch({ type: 'JUMP_TO', move });
+    dispatch({ type: ACTIONS.JUMP_TO, move });
   }
 
   function handleRestartBoard() {
-    dispatch({ type: 'RESET_BOARD' });
+    dispatch({ type: ACTIONS.RESET_BOARD });
   }
 
   function handleResetScores() {
-    dispatch({ type: 'RESET_SCORES' });
+    dispatch({ type: ACTIONS.RESET_SCORES });
   }
 
   return (

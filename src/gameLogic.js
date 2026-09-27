@@ -33,3 +33,11 @@ export function isBoardFull(squares) {
 export function playerForMove(moveIndex) {
   return moveIndex % 2 === 0 ? 'X' : 'O';
 }
+
+// Describes the move that turned `prev` into `next`, e.g. "X at row 2, col 3".
+export function describeMove(prev, next) {
+  const index = next.findIndex((value, i) => value !== prev[i]);
+  const row = Math.floor(index / 3) + 1;
+  const col = (index % 3) + 1;
+  return `${next[index]} at row ${row}, col ${col}`;
+}

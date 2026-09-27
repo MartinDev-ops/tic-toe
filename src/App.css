@@ -44,6 +44,10 @@
   .app__sidebar {
     width: 100%;
   }
+
+  .game-panel {
+    max-width: none;
+  }
 }
 
 /* ---------------------------------------------------------------
@@ -69,7 +73,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 320px;
+  width: 100%;
+  max-width: 340px;
 }
 
 /* ---------------------------------------------------------------
@@ -85,7 +90,12 @@
 }
 
 .status--over {
+  padding: 6px 16px;
+  font-size: 18px;
   color: #1d4ed8;
+  background-color: #eaf0fd;
+  border: 1px solid #1d4ed8;
+  border-radius: 999px;
 }
 
 /* ---------------------------------------------------------------
@@ -97,15 +107,16 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 8px;
-  width: 264px;
-  height: 264px;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1;
 }
 
 .square {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: clamp(28px, 9vw, 40px);
   font-weight: 600;
   color: #1f2328;
   background-color: #f6f8fa;
@@ -118,6 +129,11 @@
 .square:hover:not(:disabled) {
   background-color: #eef1f4;
   border-color: #b9c0c7;
+}
+
+.square:focus-visible {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 2px;
 }
 
 .square:disabled {
