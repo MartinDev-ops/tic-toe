@@ -1,21 +1,28 @@
 import { EMPTY_BOARD, calculateWinner, isBoardFull, playerForMove } from './gameLogic';
+import { BOT_PLAYER } from './botLogic';
 
-// Centralised game state:
-//  - history:     one board snapshot per move (index 0 = empty board)
-//  - currentMove: which snapshot is currently displayed (enables time travel)
-//  - scores:      running tally, only updated once per finished game
 // Action types, kept in one place so components and reducer can't drift apart.
 export const ACTIONS = {
   MAKE_MOVE: 'MAKE_MOVE',
   JUMP_TO: 'JUMP_TO',
   RESET_BOARD: 'RESET_BOARD',
   RESET_SCORES: 'RESET_SCORES',
+  SET_MODE: 'SET_MODE',
+  SET_DIFFICULTY: 'SET_DIFFICULTY',
 };
 
+// Centralised game state:
+//  - history:     one board snapshot per move (index 0 = empty board)
+//  - currentMove: which snapshot is currently displayed (enables time travel)
+//  - scores:      running tally, only updated once per finished game
+//  - mode:        'pvp' (two players) or 'bot' (X vs the computer as O)
+//  - difficulty:  'easy' or 'hard', used when mode is 'bot'
 export const initialGameState = {
   history: [EMPTY_BOARD],
   currentMove: 0,
   scores: { X: 0, O: 0, draws: 0 },
+  mode: 'pvp',
+  difficulty: 'easy',
 };
 
 export function gameReducer(state, action) {
@@ -30,6 +37,12 @@ export function gameReducer(state, action) {
       }
 
       const player = playerForMove(state.currentMove);
+
+      // Against the computer, only the bot may place O.
+      if (state.mode === 'bot' && player === BOT_PLAYER && !action.byBot) {
+        return state;
+      }
+
       const nextSquares = currentSquares.slice();
       nextSquares[index] = player;
 
@@ -67,6 +80,15 @@ export function gameReducer(state, action) {
 
     case ACTIONS.RESET_SCORES: {
       return { ...state, scores: { X: 0, O: 0, draws: 0 } };
+    }
+
+    case ACTIONS.SET_MODE: {
+      // Switching mode starts a fresh board; scores are kept.
+      return { ...state, mode: action.mode, history: [EMPTY_BOARD], currentMove: 0 };
+    }
+
+    case ACTIONS.SET_DIFFICULTY: {
+      return { ...state, difficulty: action.difficulty };
     }
 
     default:

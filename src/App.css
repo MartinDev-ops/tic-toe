@@ -99,6 +99,56 @@
 }
 
 /* ---------------------------------------------------------------
+   Game mode (2 players / vs computer)
+   --------------------------------------------------------------- */
+
+.game-mode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.segmented {
+  display: flex;
+  width: 100%;
+  max-width: 280px;
+  padding: 3px;
+  background-color: #f6f8fa;
+  border: 1px solid #d7dbe0;
+  border-radius: 8px;
+}
+
+.segmented__button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #57606a;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.segmented__button:hover:not(.segmented__button--active) {
+  color: #1f2328;
+}
+
+.segmented__button--active {
+  color: #ffffff;
+  background-color: #1d4ed8;
+}
+
+.status-hint {
+  margin: -10px 0 10px;
+  font-size: 13px;
+  color: #57606a;
+}
+
+/* ---------------------------------------------------------------
    Board + squares
    --------------------------------------------------------------- */
 

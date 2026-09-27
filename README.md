@@ -22,7 +22,8 @@ management.
 **3. State management: `useReducer`**
 - All game state (`history`, `currentMove`, `scores`) lives in one reducer:
   `src/gameReducer.js`
-- Actions: `MAKE_MOVE`, `JUMP_TO`, `RESET_BOARD`, `RESET_SCORES`
+- Actions: `MAKE_MOVE`, `JUMP_TO`, `RESET_BOARD`, `RESET_SCORES`,
+  `SET_MODE`, `SET_DIFFICULTY`
 - Win/draw rules live in one place, `src/gameLogic.js`, and are reused by
   both the reducer and the UI (no duplicated logic)
 - `Board`, `Square`, `Scoreboard` and `MoveHistory` are presentational
@@ -48,10 +49,12 @@ tictactoe/
     ├── index.css         base/global styles
     ├── gameLogic.js       pure helpers: calculateWinner, isBoardFull, playerForMove
     ├── gameReducer.js     useReducer state + actions
+    ├── botLogic.js        computer opponent (random + minimax)
     └── components/
         ├── Board.jsx
         ├── Square.jsx
         ├── Scoreboard.jsx
+        ├── GameModeSettings.jsx
         └── MoveHistory.jsx
 ```
 
@@ -97,3 +100,4 @@ order:
 3. A short tour of `gameReducer.js` / `gameLogic.js` explaining the state
    management approach
 4. The move history / time travel feature
+5. Playing against the computer on Easy and Hard

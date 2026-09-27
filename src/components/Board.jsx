@@ -2,7 +2,8 @@ import Square from './Square';
 
 // Board is a "dumb" component: it only renders squares and reports
 // clicks upward. All game rules live in gameLogic.js / gameReducer.js.
-export default function Board({ squares, winningLine, gameIsOver, onSquareClick }) {
+// `locked` disables every square (game over, or waiting for the computer).
+export default function Board({ squares, winningLine, locked, onSquareClick }) {
   return (
     <div className="board">
       {squares.map((value, index) => (
@@ -11,7 +12,7 @@ export default function Board({ squares, winningLine, gameIsOver, onSquareClick 
           value={value}
           onClick={() => onSquareClick(index)}
           isWinning={Boolean(winningLine && winningLine.includes(index))}
-          disabled={Boolean(value) || gameIsOver}
+          disabled={Boolean(value) || locked}
         />
       ))}
     </div>
