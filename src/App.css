@@ -1,0 +1,239 @@
+/* ---------------------------------------------------------------
+   Layout
+   --------------------------------------------------------------- */
+
+.app {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.app__header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.app__header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.app__layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.app__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 260px;
+}
+
+@media (max-width: 700px) {
+  .app__layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .app__sidebar {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Panels (shared card style)
+   --------------------------------------------------------------- */
+
+.panel {
+  background-color: #ffffff;
+  border: 1px solid #d7dbe0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.panel__title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2328;
+}
+
+.game-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 320px;
+}
+
+/* ---------------------------------------------------------------
+   Status text
+   --------------------------------------------------------------- */
+
+.status {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2328;
+  min-height: 22px;
+}
+
+.status--over {
+  color: #1d4ed8;
+}
+
+/* ---------------------------------------------------------------
+   Board + squares
+   --------------------------------------------------------------- */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+  width: 264px;
+  height: 264px;
+}
+
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1f2328;
+  background-color: #f6f8fa;
+  border: 1px solid #d7dbe0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.square:hover:not(:disabled) {
+  background-color: #eef1f4;
+  border-color: #b9c0c7;
+}
+
+.square:disabled {
+  cursor: default;
+}
+
+.square--winning {
+  background-color: #e3f4e8;
+  border-color: #3fa85a;
+  color: #1c6b34;
+}
+
+/* ---------------------------------------------------------------
+   Buttons
+   --------------------------------------------------------------- */
+
+.primary-button {
+  margin-top: 18px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #1d4ed8;
+  border: 1px solid #1d4ed8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background-color: #1a44bf;
+}
+
+.link-button {
+  margin-top: 12px;
+  padding: 0;
+  font-size: 13px;
+  color: #57606a;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: #1f2328;
+}
+
+/* ---------------------------------------------------------------
+   Scoreboard
+   --------------------------------------------------------------- */
+
+.scoreboard__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+}
+
+.scoreboard__item {
+  text-align: center;
+  padding: 10px 4px;
+  background-color: #f6f8fa;
+  border: 1px solid #e5e8eb;
+  border-radius: 6px;
+}
+
+.scoreboard__item dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #57606a;
+}
+
+.scoreboard__item dd {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2328;
+}
+
+/* ---------------------------------------------------------------
+   Move history
+   --------------------------------------------------------------- */
+
+.move-history__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.move-history__button {
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  font-size: 13px;
+  color: #1f2328;
+  background-color: #f6f8fa;
+  border: 1px solid #e5e8eb;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.move-history__button:hover:not(:disabled) {
+  background-color: #eef1f4;
+  border-color: #b9c0c7;
+}
+
+.move-history__button--current {
+  background-color: #eaf0fd;
+  border-color: #1d4ed8;
+  color: #1d4ed8;
+  font-weight: 600;
+  cursor: default;
+}

@@ -1,0 +1,67 @@
+import { EMPTY_BOARD, calculateWinner, isBoardFull, playerForMove } from './gameLogic';
+
+// Centralised game state:
+//  - history:     one board snapshot per move (index 0 = empty board)
+//  - currentMove: which snapshot is currently displayed (enables time travel)
+//  - scores:      running tally, only updated once per finished game
+export const initialGameState = {
+  history: [EMPTY_BOARD],
+  currentMove: 0,
+  scores: { X: 0, O: 0, draws: 0 },
+};
+
+export function gameReducer(state, action) {
+  switch (action.type) {
+    case 'MAKE_MOVE': {
+      const { index } = action;
+      const currentSquares = state.history[state.currentMove];
+
+      // Ignore clicks once the game is decided, or on a filled square.
+      if (calculateWinner(currentSquares) || currentSquares[index]) {
+        return state;
+      }
+
+      const player = playerForMove(state.currentMove);
+      const nextSquares = currentSquares.slice();
+      nextSquares[index] = player;
+
+      // Making a move from an earlier point in history discards any
+      // "future" moves that came after it (standard time-travel behaviour).
+      const nextHistory = [
+        ...state.history.slice(0, state.currentMove + 1),
+        nextSquares,
+      ];
+
+      let scores = state.scores;
+      const result = calculateWinner(nextSquares);
+      if (result) {
+        scores = { ...scores, [result.winner]: scores[result.winner] + 1 };
+      } else if (isBoardFull(nextSquares)) {
+        scores = { ...scores, draws: scores.draws + 1 };
+      }
+
+      return {
+        ...state,
+        history: nextHistory,
+        currentMove: nextHistory.length - 1,
+        scores,
+      };
+    }
+
+    case 'JUMP_TO': {
+      return { ...state, currentMove: action.move };
+    }
+
+    case 'RESET_BOARD': {
+      // Restart the current game but keep the scoreboard totals.
+      return { ...state, history: [EMPTY_BOARD], currentMove: 0 };
+    }
+
+    case 'RESET_SCORES': {
+      return { ...state, scores: { X: 0, O: 0, draws: 0 } };
+    }
+
+    default:
+      throw new Error(`Unknown action type: ${action.type}`);
+  }
+}
